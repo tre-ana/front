@@ -1,15 +1,16 @@
 import React from 'react'
 import { SideBar } from '../components/SideBar/SideBar'
-import { AuthIllustration } from '../components/AuthIllustration'
-import IllustrationImage from '../assets/Illustration.svg'
+import { AlertList } from '../components/AlertList/AlertList'
 import styled from 'styled-components'
 
-const AlertListPage = () => (
-  <Layout>
-    <SideBar />
-    <AuthIllustration src={IllustrationImage} />
-  </Layout>
-)
+const AlertListPage = () => {
+  return (
+    <Layout>
+      <SideBar />
+      <AlertList />
+    </Layout>
+  )
+}
 
 export default AlertListPage
 

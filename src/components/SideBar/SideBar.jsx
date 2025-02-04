@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { FaCog, FaSignOutAlt } from 'react-icons/fa'
 import profile from '../../assets/profile.svg'
 import { Modal } from '../Modal'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Bookmark } from './Bookmark'
 import { Search } from './Search'
 
@@ -14,7 +14,7 @@ export const SideBar = () => {
 
   return (
     <SidebarContainer>
-      <Logo>OrangeFarm</Logo>
+      <Logo to="/dashboard">OrangeFarm</Logo>
 
       <NavSection>
         <Search />
@@ -63,10 +63,11 @@ const SidebarContainer = styled.div`
   padding: 20px;
 `
 
-const Logo = styled.h2`
+const Logo = styled(Link)`
   font-size: 24px;
   color: #333;
   margin-bottom: 20px;
+  text-decoration: none;
 `
 
 const NavSection = styled.div`

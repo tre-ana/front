@@ -1,19 +1,18 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { FaBookmark, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useBookmark } from '../../contexts/BookmarkContext'
 
 export const Bookmark = () => {
-  const [bookmarks, setBookmarks] = useState([
-    { id: 1, name: 'Earnings' },
-    { id: 2, name: 'Refunds', badge: 6 },
-    { id: 3, name: 'Declines' },
-    { id: 4, name: 'Payouts' },
-  ])
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false)
+  const navigate = useNavigate()
+  const { bookmarks, selectBookmark, deleteBookmark, selectedBookmark } =
+    useBookmark()
 
-  const handleDeleteBookmark = (id) => {
-    setBookmarks(bookmarks.filter((bookmark) => bookmark.id !== id))
+  const handleBookmarkClick = (bookmarkName) => {
+    selectBookmark(bookmarkName)
+    navigate(`/reportlist/${bookmarkName}`)
   }
 
   return (
@@ -25,12 +24,21 @@ export const Bookmark = () => {
       {isBookmarkOpen && (
         <DropdownList>
           {bookmarks.map((bookmark) => (
-            <DropdownItem to="./reportlist" key={bookmark.id}>
+            <DropdownItem
+              key={bookmark.id}
+              onClick={() => handleBookmarkClick(bookmark.name)}
+              isSelected={selectedBookmark === bookmark.name}
+            >
               {bookmark.name}
               {bookmark.badge && (
                 <NotificationBadge>{bookmark.badge}</NotificationBadge>
               )}
-              <DeleteButton onClick={() => handleDeleteBookmark(bookmark.id)}>
+              <DeleteButton
+                onClick={(e) => {
+                  e.stopPropagation()
+                  deleteBookmark(bookmark.id)
+                }}
+              >
                 <FaTimes />
               </DeleteButton>
             </DropdownItem>
@@ -66,11 +74,13 @@ const DropdownList = styled.div`
   margin: 0;
 `
 
-const DropdownItem = styled(Link)`
+const DropdownItem = styled.div`
   font-size: 14px;
   color: #666;
   margin-left: 25px;
   margin-bottom: 10px;
+  background-color: ${(props) =>
+    props.isSelected ? '#f6f6f6' : 'transparent'};
   display: flex;
   align-items: center;
   cursor: pointer;

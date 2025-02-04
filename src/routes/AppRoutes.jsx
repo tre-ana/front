@@ -13,7 +13,7 @@ function AppRoutes() {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/report" element={<AlertReportPage />} />
-      <Route path="/reportlist" element={<AlertListPage />} />
+      <Route path="/reportlist/:bookmarkName" element={<AlertListPage />} />
     </Routes>
   )
 }
