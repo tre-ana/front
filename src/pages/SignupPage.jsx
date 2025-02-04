@@ -1,14 +1,14 @@
 import React from 'react'
-import { AuthLayout } from '../components/Layout'
+import { Layout } from '../components/Layout'
 import { SignupForm } from '../components/signup/SignupForm'
 import { AuthIllustration } from '../components/AuthIllustration'
 import IllustrationImage from '../assets/Illustration.svg'
 
 const SignupPage = () => (
-  <AuthLayout>
+  <Layout>
     <SignupForm />
     <AuthIllustration src={IllustrationImage} />
-  </AuthLayout>
+  </Layout>
 )
 
 export default SignupPage

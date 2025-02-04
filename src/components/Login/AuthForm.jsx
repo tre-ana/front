@@ -1,12 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export const AuthForm = () => {
+  const navigate = useNavigate()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // API 요청 처리 로직
+    navigate('/dashboard')
+  }
+
   return (
     <FormWrapper>
       <Title>Log in</Title>
-      <form>
+      <form onSubmit={handleSubmit}>
         <Label>Username</Label>
         <Input type="text" placeholder="Enter your username" />
         <Label>Password</Label>

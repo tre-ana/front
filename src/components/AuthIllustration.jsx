@@ -12,6 +12,7 @@ const IllustrationWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #eef0f5;
+  /* height: 100%; */
 `
 
 const Image = styled.img`
