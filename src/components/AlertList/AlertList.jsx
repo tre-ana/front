@@ -1,37 +1,67 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useBookmark } from '../../contexts/BookmarkContext'
-import { FaTrashAlt, FaCalendarAlt } from 'react-icons/fa'
+import { FaTrashAlt } from 'react-icons/fa'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 export const AlertList = () => {
   const { selectedBookmark } = useBookmark()
-  const [alertList, setAlertList] = useState([])
 
-  useEffect(() => {
-    // 샘플 데이터: 북마크 이름에 따라 다른 리스트 설정
-    const sampleData = {
-      Earnings: ['12 Dec, 2021', '10 Dec, 2021', '09 Dec, 2021'],
-      Refunds: ['08 Dec, 2021', '07 Dec, 2021'],
-      Declines: ['05 Dec, 2021'],
-      Payouts: ['04 Dec, 2021', '02 Dec, 2021'],
-    }
+  const [reports, setReports] = useState([
+    { id: 1, date: '12 Dec, 2021', checked: false },
+    { id: 2, date: '10 Dec, 2021', checked: false },
+    { id: 3, date: '09 Dec, 2021', checked: false },
+    { id: 4, date: '08 Dec, 2021', checked: false },
+    { id: 5, date: '07 Dec, 2021', checked: false },
+    { id: 6, date: '05 Dec, 2021', checked: false },
+    { id: 7, date: '04 Dec, 2021', checked: false },
+    { id: 8, date: '02 Dec, 2021', checked: false },
+    { id: 9, date: '01 Dec, 2021', checked: false },
+  ])
 
-    setAlertList(sampleData[selectedBookmark] || [])
-  }, [selectedBookmark])
+  const navigate = useNavigate()
+
+  const handleItemClick = (date) => {
+    const formattedDate = date.replace(/\s/g, '-')
+    navigate(`/${selectedBookmark}/report/${formattedDate}`)
+  }
+
+  const handleDelete = (id) => {
+    e.stopPropagation()
+    setReports(reports.filter((report) => report.id !== id))
+  }
+
+  const isCheck = (id) => {
+    setReports(
+      reports.map((report) =>
+        report.id === id ? { ...report, checked: !report.checked } : report,
+      ),
+    )
+  }
 
   return (
     <Container>
       <Header>
         <Title>{selectedBookmark}</Title>
       </Header>
+
       <List>
-        {alertList.map((alert, index) => (
-          <ListItem key={index}>
+        {reports.map((report) => (
+          <ListItem
+            key={report.id}
+            onClick={() => handleItemClick(report.date)}
+          >
             <InfoContainer>
-              <FaCalendarAlt />
-              <AlertText>{alert}</AlertText>
+              <CheckboxContainer>
+                <Checkbox
+                  type="checkbox"
+                  checked={report.checked}
+                  onChange={() => isCheck(report.id)}
+                />
+              </CheckboxContainer>
+              <AlertText>{report.date}</AlertText>
             </InfoContainer>
-            <DeleteButton>
+            <DeleteButton onClick={() => handleDelete(report.id)}>
               <FaTrashAlt />
             </DeleteButton>
           </ListItem>
@@ -42,7 +72,7 @@ export const AlertList = () => {
 }
 
 const Container = styled.div`
-  padding: 20px;
+  padding: 20px 100px;
   background-color: #f9fafb;
 `
 
@@ -71,6 +101,7 @@ const ListItem = styled.li`
   padding: 20px 18px;
   margin-bottom: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 `
 
 const InfoContainer = styled.div`
@@ -96,4 +127,11 @@ const DeleteButton = styled.button`
   &:hover {
     color: #ff0000;
   }
+`
+const CheckboxContainer = styled.div`
+  margin-right: 10px;
+`
+
+const Checkbox = styled.input`
+  transform: scale(1.2);
 `

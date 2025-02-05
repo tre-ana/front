@@ -12,7 +12,7 @@ export const Bookmark = () => {
 
   const handleBookmarkClick = (bookmarkName) => {
     selectBookmark(bookmarkName)
-    navigate(`/reportlist/${bookmarkName}`)
+    navigate(`/${bookmarkName}/reportlist`)
   }
 
   return (

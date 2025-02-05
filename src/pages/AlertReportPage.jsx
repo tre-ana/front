@@ -1,13 +1,12 @@
 import React from 'react'
 import { SideBar } from '../components/SideBar/SideBar'
-import { AuthIllustration } from '../components/AuthIllustration'
-import IllustrationImage from '../assets/Illustration.svg'
+import { Report } from '../components/AlertReport/Report'
 import styled from 'styled-components'
 
 const AlertReportPage = () => (
   <Layout>
     <SideBar />
-    <AuthIllustration src={IllustrationImage} />
+    <Report />
   </Layout>
 )
 

@@ -12,8 +12,8 @@ function AppRoutes() {
       <Route path="/" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/report" element={<AlertReportPage />} />
-      <Route path="/reportlist/:bookmarkName" element={<AlertListPage />} />
+      <Route path="/:bookmarkName/report/:date" element={<AlertReportPage />} />
+      <Route path="/:bookmarkName/reportlist" element={<AlertListPage />} />
     </Routes>
   )
 }
