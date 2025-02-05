@@ -1,19 +1,6 @@
 import React from 'react'
-import { SideBar } from '../components/SideBar/SideBar'
 import { Report } from '../components/AlertReport/Report'
-import styled from 'styled-components'
 
-const AlertReportPage = () => (
-  <Layout>
-    <SideBar />
-    <Report />
-  </Layout>
-)
+const AlertReportPage = () => <Report />
 
 export default AlertReportPage
-
-const Layout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 6fr;
-  height: 98.4vh;
-`
