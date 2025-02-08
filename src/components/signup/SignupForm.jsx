@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
+import { signupUser } from '../../services/UserApi'
 
 export const SignupForm = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    fullName: '', // userName
     email: '',
-    username: '',
-    password: '',
+    username: '', // nickname
+    password: '', // 비밀번호만 남기기
   })
-
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -17,42 +19,72 @@ export const SignupForm = () => {
     setFormData({ ...formData, [name]: value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // API 요청 처리 로직
-    console.log(formData)
-    navigate('/')
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await signupUser(
+        formData.username, // nickname
+        formData.password,
+        formData.email,
+        formData.fullName, // userName
+      )
+
+      if (response.message === 'User created successfully') {
+        // 회원가입 성공 시 로그인 화면으로 리디렉션
+        navigate('/')
+      } else {
+        setError('Failed to create account. Please try again later.')
+      }
+    } catch (err) {
+      setError('Failed to create account. Please try again later.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <FormContainer onSubmit={handleSubmit}>
       <Title>Sign Up</Title>
+
+      {/* 에러 메시지 출력 */}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+
       {['FullName', 'Email', 'Username', 'Password'].map((field, idx) => (
         <InputWrapper key={idx}>
           <Label>{field}</Label>
           <Input
-            type={field === 'password' ? 'password' : 'text'}
-            name={field}
-            value={formData[field]}
+            type={field.includes('Password') ? 'password' : 'text'}
+            name={field.toLowerCase().replace(' ', '')} // camelCase로 변환
+            value={formData[field.toLowerCase().replace(' ', '')]}
             onChange={handleChange}
             placeholder={`Enter your ${field}`}
             required
           />
         </InputWrapper>
       ))}
+
       <CheckboxWrapper>
         <input type="checkbox" required />
         <span>
           By creating an account, you agree to the <a href="#">terms</a>.
         </span>
       </CheckboxWrapper>
-      <SubmitButton type="submit">Create account</SubmitButton>
+
+      <SubmitButton type="submit" disabled={loading}>
+        {loading ? 'Creating account...' : 'Create account'}
+      </SubmitButton>
     </FormContainer>
   )
 }
 
 const FormContainer = styled.form`
   padding: 80px;
+  max-width: 400px;
+  margin: 0 auto;
 `
 
 const Title = styled.h2`
@@ -98,8 +130,18 @@ const SubmitButton = styled.button`
   border: none;
   border-radius: 8px;
   cursor: pointer;
-
   &:hover {
     background-color: #5848e5;
   }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`
+
+const ErrorMessage = styled.p`
+  color: red;
+  text-align: center;
+  font-size: 0.9rem;
 `

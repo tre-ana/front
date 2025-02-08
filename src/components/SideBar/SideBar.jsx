@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import styled from 'styled-components'
 import { FaCog, FaSignOutAlt } from 'react-icons/fa'
 import profile from '../../assets/profile.svg'
@@ -6,11 +6,19 @@ import { Modal } from '../Modal'
 import { useNavigate, Link } from 'react-router-dom'
 import { Bookmark } from './Bookmark'
 import { Search } from './Search'
+import { AuthContext } from '../../contexts/AuthContext'
 
 export const SideBar = () => {
   const [modalVisible, setModalVisible] = useState(false)
+  const { user, logout } = useContext(AuthContext)
 
   const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    setModalVisible(false)
+    navigate('/')
+  }
 
   return (
     <SidebarContainer>
@@ -25,8 +33,8 @@ export const SideBar = () => {
         <UserProfile>
           <Avatar src={profile} alt="User Avatar" />
           <UserInfo>
-            <UserName>이다은</UserName>
-            <UserRole>Admin</UserRole>
+            <UserName>{user ? user.nickname : 'unknown'}</UserName>
+            <UserRole>{user ? 'Admin' : 'Guest'}</UserRole>
           </UserInfo>
         </UserProfile>
         <SettingsLink>
@@ -40,11 +48,7 @@ export const SideBar = () => {
             title="계정을 로그아웃하시겠습니까?"
             message="해당 대시보드에 액세스하려면 다시 로그인해야 합니다."
             onCancel={() => setModalVisible(false)}
-            onConfirm={() => {
-              setModalVisible(false)
-              alert('로그아웃 되었습니다.')
-              navigate('/')
-            }}
+            onConfirm={handleLogout}
           />
         )}
       </UserSection>

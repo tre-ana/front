@@ -1,30 +1,67 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import { AuthContext } from '../../contexts/AuthContext'
 
 export const LoginForm = () => {
+  const { login, loading } = useContext(AuthContext)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // API 요청 처리 로직
-    navigate('/dashboard')
+    try {
+      // 로그인 시도
+      const result = await login(email, password)
+
+      // 로그인 성공 시 대시보드로 리디렉션
+      if (result) {
+        console.log(result)
+        navigate('/dashboard')
+      } else {
+        setError('Login failed. Please check your credentials and try again.')
+      }
+    } catch (err) {
+      setError('Login failed. Please check your credentials and try again.')
+    }
+  }
+
+  if (loading) {
+    return <div>Loading...</div>
   }
 
   return (
     <FormWrapper>
       <Title>Log in</Title>
       <form onSubmit={handleSubmit}>
-        <Label>Username</Label>
-        <Input type="text" placeholder="Enter your username" />
+        <Label>Email</Label>
+        <Input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <Label>Password</Label>
-        <Input type="password" placeholder="Enter your password" />
+        <Input
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         {/* <RememberSection>
           <input type="checkbox" />
           <span>Remember me</span>
           <ResetLink href="#">Reset Password?</ResetLink>
         </RememberSection> */}
-        <LoginButton>Log in</LoginButton>
+        <LoginButton type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Log in'}
+        </LoginButton>
       </form>
 
       <SignupSection>
@@ -92,4 +129,10 @@ const SignupSection = styled.p`
 const NewAccountLink = styled(Link)`
   color: #6b7cff;
   text-decoration: none;
+`
+
+const ErrorMessage = styled.p`
+  color: red;
+  text-align: center;
+  font-size: 0.9rem;
 `
