@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-import { signupUser } from '../../services/UserApi'
+import { signupUser } from '../../services/Api'
 
 export const SignupForm = () => {
   const [formData, setFormData] = useState({
     fullName: '', // userName
     email: '',
     username: '', // nickname
-    password: '', // 비밀번호만 남기기
+    password: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -26,21 +26,17 @@ export const SignupForm = () => {
     setError('')
 
     try {
-      const response = await signupUser(
+      await signupUser(
         formData.username, // nickname
         formData.password,
         formData.email,
         formData.fullName, // userName
       )
-
-      if (response.message === 'User created successfully') {
-        // 회원가입 성공 시 로그인 화면으로 리디렉션
-        navigate('/')
-      } else {
-        setError('Failed to create account. Please try again later.')
-      }
+      navigate('/') // 회원가입 성공 시 로그인 화면으로 리디렉션
     } catch (err) {
-      setError('Failed to create account. Please try again later.')
+      setError(
+        err.message || 'Failed to create account. Please try again later.',
+      )
     } finally {
       setLoading(false)
     }

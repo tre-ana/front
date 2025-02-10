@@ -10,7 +10,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 
 export const SideBar = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const { user, logout } = useContext(AuthContext)
+  const { auth, logout } = useContext(AuthContext)
 
   const navigate = useNavigate()
 
@@ -33,8 +33,8 @@ export const SideBar = () => {
         <UserProfile>
           <Avatar src={profile} alt="User Avatar" />
           <UserInfo>
-            <UserName>{user ? user.nickname : 'unknown'}</UserName>
-            <UserRole>{user ? 'Admin' : 'Guest'}</UserRole>
+            <UserName>{auth.user ? auth.user.nickname : 'unknown'}</UserName>
+            <UserRole>{auth.isAuthenticated ? 'Admin' : 'Guest'}</UserRole>
           </UserInfo>
         </UserProfile>
         <SettingsLink>
