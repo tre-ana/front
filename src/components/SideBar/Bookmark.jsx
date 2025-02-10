@@ -2,17 +2,17 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { FaBookmark, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import { useBookmark } from '../../contexts/BookmarkContext'
+import { useFavorites } from '../../contexts/FavoritesContext'
 
 export const Bookmark = () => {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false)
+  const [selectedKeyword, setSelectedKeyword] = useState(null)
   const navigate = useNavigate()
-  const { bookmarks, selectBookmark, deleteBookmark, selectedBookmark } =
-    useBookmark()
+  const { favorites, reports, removeKeyword } = useFavorites()
 
-  const handleBookmarkClick = (bookmarkName) => {
-    selectBookmark(bookmarkName)
-    navigate(`/${bookmarkName}/reportlist`)
+  const handleBookmarkClick = (keyword) => {
+    setSelectedKeyword(keyword)
+    navigate(`/${encodeURIComponent(keyword)}/reportlist`)
   }
 
   return (
@@ -23,26 +23,38 @@ export const Bookmark = () => {
       </DropdownHeader>
       {isBookmarkOpen && (
         <DropdownList>
-          {bookmarks.map((bookmark) => (
-            <DropdownItem
-              key={bookmark.id}
-              onClick={() => handleBookmarkClick(bookmark.name)}
-              isSelected={selectedBookmark === bookmark.name}
-            >
-              {bookmark.name}
-              {bookmark.badge && (
-                <NotificationBadge>{bookmark.badge}</NotificationBadge>
-              )}
-              <DeleteButton
-                onClick={(e) => {
-                  e.stopPropagation()
-                  deleteBookmark(bookmark.id)
-                }}
+          {favorites.map((favorite) => {
+            const unreadReportsCount = reports.filter(
+              (report) =>
+                report.keyword === favorite.keyword && !report.isViewed,
+            ).length
+
+            return (
+              <DropdownItem
+                key={favorite.keyword}
+                isSelected={selectedKeyword === favorite.keyword}
               >
-                <FaTimes />
-              </DeleteButton>
-            </DropdownItem>
-          ))}
+                <span
+                  onClick={() => handleBookmarkClick(favorite.keyword)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {favorite.keyword}
+                </span>
+                {/* 읽지 않은 리포트 개수 표시 */}
+                {unreadReportsCount > 0 && (
+                  <NotificationBadge>{unreadReportsCount}</NotificationBadge>
+                )}
+                <DeleteButton
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    removeKeyword(favorite.keyword)
+                  }}
+                >
+                  <FaTimes />
+                </DeleteButton>
+              </DropdownItem>
+            )
+          })}
         </DropdownList>
       )}
     </NavDropdown>

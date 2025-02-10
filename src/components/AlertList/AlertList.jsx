@@ -1,67 +1,95 @@
-import React, { useState } from 'react'
-import { useBookmark } from '../../contexts/BookmarkContext'
+import React, { useState, useEffect } from 'react'
+import { useFavorites } from '../../contexts/FavoritesContext'
 import { FaTrashAlt } from 'react-icons/fa'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 
-export const AlertList = () => {
-  const { selectedBookmark } = useBookmark()
+export const AlertList = ({ bookmarkName }) => {
+  const keyword = bookmarkName
 
-  const [reports, setReports] = useState([
-    { id: 1, date: '12 Dec, 2021', checked: false },
-    { id: 2, date: '10 Dec, 2021', checked: false },
-    { id: 3, date: '09 Dec, 2021', checked: false },
-    { id: 4, date: '08 Dec, 2021', checked: false },
-    { id: 5, date: '07 Dec, 2021', checked: false },
-    { id: 6, date: '05 Dec, 2021', checked: false },
-    { id: 7, date: '04 Dec, 2021', checked: false },
-    { id: 8, date: '02 Dec, 2021', checked: false },
-    { id: 9, date: '01 Dec, 2021', checked: false },
-  ])
+  const { reports, updateReportViewStatus, removeReport } = useFavorites()
 
   const navigate = useNavigate()
 
-  const handleItemClick = (date) => {
-    const formattedDate = date.replace(/\s/g, '-')
-    navigate(`/${selectedBookmark}/report/${formattedDate}`)
-  }
+  const [filteredData, setFilteredData] = useState([])
 
-  const handleDelete = (id) => {
-    e.stopPropagation()
-    setReports(reports.filter((report) => report.id !== id))
-  }
-
-  const isCheck = (id) => {
-    setReports(
-      reports.map((report) =>
-        report.id === id ? { ...report, checked: !report.checked } : report,
-      ),
+  useEffect(() => {
+    const filteredReports = reports.filter(
+      (report) => report.keyword === keyword,
     )
+    setFilteredData(filteredReports)
+  }, [reports, keyword])
+
+  const handleItemClick = (e, date) => {
+    if (e.target.type !== 'checkbox' && e.target.type !== 'button') {
+      const formattedDate = date.replace(/\s/g, '-')
+      navigate(`/${encodeURIComponent(keyword)}/report/${formattedDate}`)
+    }
+  }
+
+  const handleDelete = (reportId, e) => {
+    e.stopPropagation()
+    // 해당 리포트를 삭제
+    removeReport(reportId)
+  }
+
+  const handleCheckboxChange = (
+    reportId,
+    isViewed,
+    keyword,
+    reportDate,
+    keywordId,
+    reportContent,
+    e,
+  ) => {
+    e.stopPropagation()
+    console.log(reports)
+    console.log(filteredData)
+    updateReportViewStatus(
+      reportId,
+      !isViewed,
+      keyword,
+      reportDate,
+      keywordId,
+      reportContent,
+    ) // 읽음 상태 반전
   }
 
   return (
     <Container>
       <Header>
-        <Title>{selectedBookmark}</Title>
+        <Title>{keyword} Daily Report List</Title>
       </Header>
 
       <List>
-        {reports.map((report) => (
+        {filteredData.map((filteredReports) => (
           <ListItem
-            key={report.id}
-            onClick={() => handleItemClick(report.date)}
+            key={filteredReports.reportId}
+            onClick={(e) => handleItemClick(e, filteredReports.reportDate)}
           >
             <InfoContainer>
               <CheckboxContainer>
                 <Checkbox
                   type="checkbox"
-                  checked={report.checked}
-                  onChange={() => isCheck(report.id)}
+                  checked={filteredReports.isViewed}
+                  onChange={(e) =>
+                    handleCheckboxChange(
+                      filteredReports.reportId,
+                      filteredReports.isViewed,
+                      filteredReports.keyword,
+                      filteredReports.reportDate,
+                      filteredReports.keywordId,
+                      filteredReports.reportContent,
+                      e,
+                    )
+                  }
                 />
               </CheckboxContainer>
-              <AlertText>{report.date}</AlertText>
+              <AlertText>{filteredReports.reportDate}</AlertText>
             </InfoContainer>
-            <DeleteButton onClick={() => handleDelete(report.id)}>
+            <DeleteButton
+              onClick={(e) => handleDelete(filteredReports.reportId, e)}
+            >
               <FaTrashAlt />
             </DeleteButton>
           </ListItem>
@@ -73,6 +101,7 @@ export const AlertList = () => {
 
 const Container = styled.div`
   padding: 20px 100px;
+  height: 98.4vh;
   background-color: #f9fafb;
 `
 

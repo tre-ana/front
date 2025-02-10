@@ -12,12 +12,12 @@ const chartData = [
   { name: '30k', value: 90 },
 ]
 
-export const Report = () => (
+export const Report = ({ bookmarkName, date }) => (
   <Layout>
     <ContentWrapper>
       <Box p={4}>
         <Typography variant="h4" gutterBottom>
-          2021 01 14
+          {bookmarkName} {date}
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={3}>

@@ -104,6 +104,7 @@ export const deleteKeyword = async (keyword) => {
 export const getUserFavorites = async () => {
   try {
     const response = await apiClient.get(API_URLS.GET_FAVORITES)
+    console.log('Favorites Response:', response.data)
     return response.data
   } catch (error) {
     handleApiError(error)
@@ -120,9 +121,9 @@ export const getUserFavorites = async () => {
 // ]
 
 // 사용자가 즐겨찾기한 키워드에 대한 리포트 조회 API 호출
-export const getUserReports = async () => {
+export const getReportsForKeyword = async (keyword) => {
   try {
-    const response = await apiClient.get(API_URLS.GET_REPORTS)
+    const response = await apiClient.get(`${API_URLS.GET_REPORTS}/${keyword}`)
     return response.data
   } catch (error) {
     handleApiError(error)
@@ -139,7 +140,7 @@ export const getUserReports = async () => {
 //   },
 //   {
 //     "reportId": 2,
-//     "keyword": "example_keyword_2",
+//     "keyword": "example_keyword_1",
 //     "reportDate": "2025-02-11",
 //     "reportContent": "This is a report content for example_keyword_2.",
 //     "isViewed": true
@@ -147,11 +148,22 @@ export const getUserReports = async () => {
 // ]
 
 // 리포트의 'isViewed' 상태 업데이트 API 호출
-export const updateReportViewed = async (reportId, isViewed) => {
+export const updateReportViewed = async (
+  reportId,
+  isViewed,
+  keyword,
+  reportDate,
+  keywordId,
+  reportContent,
+) => {
   try {
     const response = await apiClient.put(API_URLS.UPDATE_REPORT_VIEWED, {
       reportId,
       isViewed,
+      keyword,
+      reportDate,
+      keywordId,
+      reportContent,
     })
     return response.data
   } catch (error) {
@@ -165,4 +177,20 @@ export const updateReportViewed = async (reportId, isViewed) => {
 //   "reportDate": "2025-02-10",
 //   "reportContent": "This is a report content for example_keyword_1.",
 //   "isViewed": true
+// }
+
+// 리포트 삭제 API 호출
+export const deleteReport = async (reportId) => {
+  try {
+    const response = await apiClient.delete(API_URLS.DELETE_REPORTS, {
+      data: { reportId },
+    })
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+// {
+//   "message": "Report with ID 1 deleted successfully!"
 // }

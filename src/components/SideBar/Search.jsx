@@ -1,10 +1,57 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { FaSearch, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { useSearch } from '../../contexts/SearchContext'
 
 export const Search = () => {
+  const { searchState, updateSearchState } = useSearch()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [isComparisonDisabled, setIsComparisonDisabled] = useState(false)
+
+  const [keyword, setKeyword] = useState(searchState.keyword)
+  const [startDate, setStartDate] = useState(searchState.startDate)
+  const [endDate, setEndDate] = useState(searchState.endDate)
+  const [comparisonTarget, setComparisonTarget] = useState(
+    searchState.comparisonTarget,
+  )
+  const [isComparisonDisabled, setIsComparisonDisabled] = useState(
+    searchState.isComparisonDisabled,
+  )
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    if (name === 'keyword') setKeyword(value)
+    if (name === 'startDate') setStartDate(value)
+    if (name === 'endDate') setEndDate(value)
+    if (name === 'comparisonTarget') setComparisonTarget(value)
+  }
+
+  const handleCheckboxChange = () => {
+    setIsComparisonDisabled(!isComparisonDisabled)
+    if (!isComparisonDisabled) {
+      setComparisonTarget('')
+    }
+  }
+
+  const handleSearch = () => {
+    if (!keyword.trim()) {
+      alert('키워드를 입력해주세요')
+      return
+    }
+
+    updateSearchState({
+      keyword,
+      startDate,
+      endDate,
+      comparisonTarget,
+      isComparisonDisabled,
+    })
+    console.log(searchState)
+    setKeyword('')
+    setStartDate('')
+    setEndDate('')
+    setComparisonTarget('')
+    setIsComparisonDisabled(false)
+  }
 
   return (
     <NavDropdown>
@@ -15,32 +62,51 @@ export const Search = () => {
         <SearchPanel>
           <FieldLabel>
             키워드
-            <SearchField type="text" placeholder="키워드" />
+            <SearchField
+              type="text"
+              name="keyword"
+              value={keyword}
+              placeholder="키워드"
+              onChange={handleInputChange}
+            />
           </FieldLabel>
           <FieldLabel>
             기간
             <DateContainer>
-              <SearchField type="date" />
-              <SearchField type="date" />
+              <SearchField
+                type="date"
+                name="startDate"
+                value={startDate}
+                onChange={handleInputChange}
+              />
+              <SearchField
+                type="date"
+                name="endDate"
+                value={endDate}
+                onChange={handleInputChange}
+              />
             </DateContainer>
           </FieldLabel>
           <FieldLabel>
             비교 대상
             <SearchField
               type="text"
+              name="comparisonTarget"
+              value={comparisonTarget}
               placeholder="비교 대상"
               disabled={isComparisonDisabled}
+              onChange={handleInputChange}
             />
           </FieldLabel>
           <CheckboxContainer>
             <Checkbox
               type="checkbox"
               checked={isComparisonDisabled}
-              onChange={() => setIsComparisonDisabled(!isComparisonDisabled)}
+              onChange={handleCheckboxChange}
             />
             비교대상 없음
           </CheckboxContainer>
-          <SearchButton>Search</SearchButton>
+          <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SearchPanel>
       )}
     </NavDropdown>

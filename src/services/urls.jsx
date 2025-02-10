@@ -9,4 +9,5 @@ export const API_URLS = {
   GET_FAVORITES: '/keywords/favorites',
   GET_REPORTS: '/keywords/reports',
   UPDATE_REPORT_VIEWED: '/keywords/update_report_viewed',
+  DELETE_REPORTS: '/keywords/delete_report',
 }
