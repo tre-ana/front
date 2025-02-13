@@ -194,3 +194,25 @@ export const deleteReport = async (reportId) => {
 // {
 //   "message": "Report with ID 1 deleted successfully!"
 // }
+
+// 결과 분석 API 호출
+export const getResult = async (keyword) => {
+  try {
+    const response = await apiClient.post(API_URLS.GET_RESULT, {
+      keyword,
+    })
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+// Datalab 데이터 API 호출
+export const getDatalab = async (body) => {
+  try {
+    const response = await apiClient.post(API_URLS.GET_DATALAB, body)
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}

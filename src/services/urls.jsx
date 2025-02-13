@@ -10,4 +10,6 @@ export const API_URLS = {
   GET_REPORTS: '/keywords/reports',
   UPDATE_REPORT_VIEWED: '/keywords/update_report_viewed',
   DELETE_REPORTS: '/keywords/delete_report',
+  GET_RESULT: '/result', // 결과 분석을 위한 경로
+  GET_DATALAB: '/datalab', // Datalab 데이터를 위한 경로
 }

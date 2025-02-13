@@ -4,35 +4,58 @@ import { FaSearch, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { useSearch } from '../../contexts/SearchContext'
 
 export const Search = () => {
-  const { searchState, updateSearchState } = useSearch()
+  const { searchState, updateSearchState, fetchResult, fetchDatalab } =
+    useSearch()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   const [keyword, setKeyword] = useState(searchState.keyword)
+  const [relatedKeywords, setRelatedKeywords] = useState(
+    searchState.relatedKeywords,
+  )
   const [startDate, setStartDate] = useState(searchState.startDate)
   const [endDate, setEndDate] = useState(searchState.endDate)
+  const [timeUnit, setTimeUnit] = useState(searchState.timeUnit)
+  const [device, setDevice] = useState(searchState.device)
+  const [gender, setGender] = useState(searchState.gender)
+  const [ages, setAges] = useState(searchState.ages)
   const [comparisonTarget, setComparisonTarget] = useState(
     searchState.comparisonTarget,
   )
-  const [isComparisonDisabled, setIsComparisonDisabled] = useState(
-    searchState.isComparisonDisabled,
+  const [comparisonKeywords, setComparisonKeywords] = useState(
+    searchState.comparisonKeywords,
   )
+  // const [isComparisonDisabled, setIsComparisonDisabled] = useState(
+  //   searchState.isComparisonDisabled,
+  // )
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
     if (name === 'keyword') setKeyword(value)
+    if (name === 'relatedKeywords') setRelatedKeywords(value.split(','))
     if (name === 'startDate') setStartDate(value)
     if (name === 'endDate') setEndDate(value)
-    if (name === 'comparisonTarget') setComparisonTarget(value)
-  }
-
-  const handleCheckboxChange = () => {
-    setIsComparisonDisabled(!isComparisonDisabled)
-    if (!isComparisonDisabled) {
-      setComparisonTarget('')
+    if (name === 'timeUnit') setTimeUnit(value)
+    if (name === 'device') setDevice(value)
+    if (name === 'gender') setGender(value)
+    if (name === 'ages') {
+      const newAges = ages.includes(value)
+        ? ages.filter((age) => age !== value)
+        : [...ages, value]
+      setAges(newAges)
     }
+    if (name === 'comparisonTarget') setComparisonTarget(value)
+    if (name === 'comparisonKeywords') setComparisonKeywords(value.split(','))
   }
 
-  const handleSearch = () => {
+  // const handleCheckboxChange = () => {
+  //   setIsComparisonDisabled(!isComparisonDisabled)
+  //   if (!isComparisonDisabled) {
+  //     setComparisonTarget('')
+  //     setComparisonKeywords([])
+  //   }
+  // }
+
+  const handleSearch = async () => {
     if (!keyword.trim()) {
       alert('키워드를 입력해주세요')
       return
@@ -40,17 +63,19 @@ export const Search = () => {
 
     updateSearchState({
       keyword,
+      relatedKeywords,
       startDate,
       endDate,
+      timeUnit,
+      device,
+      gender,
+      ages,
       comparisonTarget,
-      isComparisonDisabled,
+      comparisonKeywords,
+      // isComparisonDisabled,
     })
-    console.log(searchState)
-    setKeyword('')
-    setStartDate('')
-    setEndDate('')
-    setComparisonTarget('')
-    setIsComparisonDisabled(false)
+    await fetchResult()
+    await fetchDatalab()
   }
 
   return (
@@ -67,6 +92,16 @@ export const Search = () => {
               name="keyword"
               value={keyword}
               placeholder="키워드"
+              onChange={handleInputChange}
+            />
+          </FieldLabel>
+          <FieldLabel>
+            연관 키워드 (쉼표로 구분)
+            <SearchField
+              type="text"
+              name="relatedKeywords"
+              value={relatedKeywords.join(',')}
+              placeholder="연관 키워드"
               onChange={handleInputChange}
             />
           </FieldLabel>
@@ -88,6 +123,66 @@ export const Search = () => {
             </DateContainer>
           </FieldLabel>
           <FieldLabel>
+            기간 단위
+            {['day', 'week', 'month'].map((unit) => (
+              <RadioInput key={unit}>
+                <input
+                  type="radio"
+                  name="timeUnit"
+                  value={unit}
+                  checked={timeUnit === unit}
+                  onChange={handleInputChange}
+                />{' '}
+                {unit}
+              </RadioInput>
+            ))}
+          </FieldLabel>
+          <FieldLabel>
+            기기 유형
+            {['mo', 'pc'].map((d) => (
+              <RadioInput key={d}>
+                <input
+                  type="radio"
+                  name="device"
+                  value={d}
+                  checked={device === d}
+                  onChange={handleInputChange}
+                />{' '}
+                {d}
+              </RadioInput>
+            ))}
+          </FieldLabel>
+          <FieldLabel>
+            성별
+            {['m', 'f'].map((g) => (
+              <RadioInput key={g}>
+                <input
+                  type="radio"
+                  name="gender"
+                  value={g}
+                  checked={gender === g}
+                  onChange={handleInputChange}
+                />{' '}
+                {g}
+              </RadioInput>
+            ))}
+          </FieldLabel>
+          <FieldLabel>
+            연령대
+            {[...'12345678910'].map((age) => (
+              <CheckboxInput key={age}>
+                <input
+                  type="checkbox"
+                  name="ages"
+                  value={age}
+                  checked={ages.includes(age)}
+                  onChange={handleInputChange}
+                />{' '}
+                {age}
+              </CheckboxInput>
+            ))}
+          </FieldLabel>
+          <FieldLabel>
             비교 대상
             <SearchField
               type="text"
@@ -98,21 +193,31 @@ export const Search = () => {
               onChange={handleInputChange}
             />
           </FieldLabel>
-          <CheckboxContainer>
+          <FieldLabel>
+            비교 대상 키워드 (쉼표로 구분)
+            <SearchField
+              type="text"
+              name="comparisonKeywords"
+              value={comparisonKeywords.join(',')}
+              placeholder="비교 대상 키워드"
+              disabled={isComparisonDisabled}
+              onChange={handleInputChange}
+            />
+          </FieldLabel>
+          {/* <CheckboxContainer>
             <Checkbox
               type="checkbox"
               checked={isComparisonDisabled}
               onChange={handleCheckboxChange}
-            />
+            />{' '}
             비교대상 없음
-          </CheckboxContainer>
+          </CheckboxContainer> */}
           <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SearchPanel>
       )}
     </NavDropdown>
   )
 }
-
 const NavDropdown = styled.div`
   margin-bottom: 15px;
 `
@@ -161,18 +266,40 @@ const CheckboxContainer = styled.div`
 
 const Checkbox = styled.input``
 
-const SearchButton = styled.button`
-  background-color: black;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-`
+// const SearchButton = styled.button`
+//   background-color: black;
+//   color: white;
+//   border: none;
+//   padding: 8px 16px;
+//   border-radius: 4px;
+//   cursor: pointer;
+// `
 const FieldLabel = styled.label`
   font-size: 14px;
   color: #666;
   display: flex;
   flex-direction: column;
   gap: 5px;
+`
+// const RadioGroup = styled.div`
+//   display: flex;
+//   gap: 10px;
+//   margin-top: 5px;
+// `
+
+// const CheckboxGroup = styled.div`
+//   display: flex;
+//   flex-wrap: wrap;
+//   gap: 10px;
+//   margin-top: 5px;
+// `
+
+const SearchButton = styled.button`
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 `
