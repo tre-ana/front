@@ -1,15 +1,15 @@
-export const BASE_URL = 'http://127.0.0.1:8000'
+export const BASE_URL = import.meta.env.VITE_BASE_URL
 
 export const API_URLS = {
-  LOGIN: '/users/login',
-  SIGNUP: '/users/signup',
-  PROTECTED: '/users/protected',
-  SAVE_KEYWORD: '/keywords/save_keyword',
-  DELETE_KEYWORD: '/keywords/delete_keyword',
-  GET_FAVORITES: '/keywords/favorites',
-  GET_REPORTS: '/keywords/reports',
-  UPDATE_REPORT_VIEWED: '/keywords/update_report_viewed',
-  DELETE_REPORTS: '/keywords/delete_report',
-  GET_RESULT: '/result', // 결과 분석을 위한 경로
-  GET_DATALAB: '/datalab', // Datalab 데이터를 위한 경로
+  LOGIN: import.meta.env.VITE_API_LOGIN,
+  SIGNUP: import.meta.env.VITE_API_SIGNUP,
+  PROTECTED: import.meta.env.VITE_API_PROTECTED,
+  SAVE_KEYWORD: import.meta.env.VITE_API_SAVE_KEYWORD,
+  DELETE_KEYWORD: import.meta.env.VITE_API_DELETE_KEYWORD,
+  GET_FAVORITES: import.meta.env.VITE_API_GET_FAVORITES,
+  GET_REPORTS: import.meta.env.VITE_API_GET_REPORTS,
+  UPDATE_REPORT_VIEWED: import.meta.env.VITE_API_UPDATE_REPORT_VIEWED,
+  DELETE_REPORTS: import.meta.env.VITE_API_DELETE_REPORTS,
+  GET_RESULT: import.meta.env.VITE_API_GET_RESULT,
+  GET_DATALAB: import.meta.env.VITE_API_GET_DATALAB,
 }

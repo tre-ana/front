@@ -36,6 +36,7 @@ export const SearchProvider = ({ children }) => {
     try {
       const result = await getResult(searchState.keyword)
       updateSearchState({ resultData: result, loading: false })
+      console.log(result)
     } catch (error) {
       updateSearchState({ error: error.message, loading: false })
     }
@@ -79,6 +80,7 @@ export const SearchProvider = ({ children }) => {
     try {
       const data = await getDatalab(body)
       updateSearchState({ datalabData: data, loading: false })
+      console.log(data)
     } catch (error) {
       updateSearchState({ error: error.message, loading: false })
     }
